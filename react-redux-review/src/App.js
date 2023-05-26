@@ -1,12 +1,27 @@
 import logo from './logo.svg';
 import Item from './Item';
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useReducer } from 'react';
+
+const reducer = (state, action) => {
+  switch(action.type) {
+    case "add": {
+      return [...state, {description: action.description}]
+    }
+    case "delete": {
+      return state.filter((item, i) => i !== action.index);
+    }
+    default: {
+      return state;
+    }
+  }
+}
 
 function App() {
 
   const [item, setItem] = useState('');
-  const [list, setList] = useState([]);
+  const [list, dispatch] = useReducer(reducer, []);
+
 
   const handleChange = (e) => {
     setItem(e.target.value);
@@ -14,11 +29,19 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setList(prevList => [...prevList, {description: item}]);
+    // setList(prevList => [...prevList, {description: item}]);
+    dispatch({
+      type: 'add',
+      description: item
+    })
   }
 
   const handleDelete = (index) => {
-    setList(prevList => prevList.filter((item, i) => i !== index));
+    // setList(prevList => prevList.filter((item, i) => i !== index));
+    dispatch({
+      type: 'delete',
+      index: index
+    })
   }
 
   return (
